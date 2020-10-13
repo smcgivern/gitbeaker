@@ -71,6 +71,7 @@ export async function handler(endpoint: string, options: Record<string, unknown>
 
     try {
       if (options.method === 'stream') return Got(endpoint, options);
+
       response = await Got(endpoint, options); // eslint-disable-line
 
       if (!response) {
@@ -100,6 +101,8 @@ export async function handler(endpoint: string, options: Record<string, unknown>
       throw e;
     }
   }
+
+  console.log(response);
 
   const { statusCode, headers } = response;
 
