@@ -96,6 +96,12 @@ export async function handler(endpoint: string, options: Record<string, unknown>
     }
   }
 
+  if (!response.statusCode) {
+    console.log(response);
+    console.log(endpoint);
+    console.log(options);
+  }
+
   const { statusCode, headers } = response;
 
   const body = processBody(response);
