@@ -68,9 +68,17 @@ export async function handler(endpoint: string, options: Record<string, unknown>
 
   for (let i = 0; i < maxRetries; i += 1) {
     const waitTime = 2 ** i * 0.1;
+
     try {
       if (options.method === 'stream') return Got(endpoint, options);
       response = await Got(endpoint, options); // eslint-disable-line
+
+      if (!response) {
+        console.log(endpoint);
+        console.log(options);
+        console.log(Got);
+      }
+
       break;
     } catch (e) {
       if (e.response) {
