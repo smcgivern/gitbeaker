@@ -65,19 +65,29 @@ export async function handler(endpoint: string, options: Record<string, unknown>
   const retryCodes = [429, 502];
   const maxRetries = 10;
   let response;
+  const logs: string[] = [];
 
   for (let i = 0; i < maxRetries; i += 1) {
     const waitTime = 2 ** i * 0.1;
+    logs.push(`wait time ${i}`);
 
     try {
       if (options.method === 'stream') return Got(endpoint, options);
 
+      logs.push(`try`);
+
       response = await Got(endpoint, options); // eslint-disable-line
+
+      logs.push(`try response ${response}`);
 
       break;
     } catch (e) {
       if (e.response) {
+        logs.push(`error ${e.response}`);
+
         if (retryCodes.includes(e.response.statusCode)) {
+          logs.push(`retry`);
+
           await wait(waitTime); // eslint-disable-line
           continue; // eslint-disable-line
         }
@@ -96,7 +106,8 @@ export async function handler(endpoint: string, options: Record<string, unknown>
     }
   }
 
-  if (!response.statusCode) {
+  if (!response) {
+    console.log(logs);
     console.log(response);
     console.log(endpoint);
     console.log(options);
